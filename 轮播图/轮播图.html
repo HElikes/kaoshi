@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			li{
+				list-style: none;
+			}
+			.box{
+				width: 850px;
+				height: 500px;
+				position: relative;
+				margin: 100px auto;
+				overflow: hidden;
+			}
+			.box ul{
+				width: 5950px;
+				height: 500px;
+				position: absolute;
+				left:-850px;
+			}
+			.box ul li{
+				width: 850px;
+				height: 500px;
+				float: left;
+			}
+			.box ol{
+				position: absolute;
+				right: 5%;
+				bottom: 20px;
+				z-index: 2;
+				height: 25px;
+			}
+			.box ol li{
+				width: 25px;
+				height: 25px;
+				line-height: 25px;
+				text-align: center;
+				background: #FFFFFF;
+				margin-left: 5px;
+				float: left;
+				border-radius: 50%;
+				cursor: pointer;
+			}
+			.box ol .ac{
+				background: cyan;
+				color:#FFFFFF;
+			}
+			.box>a{
+				width: 30px;
+				height: 30px;
+				line-height: 25px;
+				text-align: center;
+				text-decoration: none;
+				color: peru;
+				font-size: 30px;
+				position: absolute;
+				top: 50%;
+				margin-top: -15px;
+				z-index: 2;
+				background: rgba(0,0,0,.3);
+			}
+			.box .prev{
+				left: 0;
+			}
+			.box .next{
+				right: 0;
+			}
+		</style>
+		<script src="tools.js">
+			
+		</script>
+	</head>
+	<body>
+		<div class="box">
+			<ul>
+				<li><a href="javascript:alert(4);"><img src="12728082_192158998000_2.jpg"/></a></li>
+				<li><a href="javascript:alert(0);"><img src="1369025_192645024000_2.jpg"/></a></li>
+				<li><a href="javascript:alert(1);"><img src="2008814183939909_2.jpg"/></a></li>
+				<li><a href="javascript:alert(2);"><img src="47e58PICQUR_1024.jpg"/></a></li>
+				<li><a href="javascript:alert(3);"><img src="5450ae2fdef8a.jpg"/></a></li>
+				<li><a href="javascript:alert(4);"><img src="5.jpg"/></a></li>
+				<li><a href="javascript:alert(0);"><img src="4.jpg"/></a></li>
+			</ul>
+			<ol>
+				<li class="ac">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+			</ol>
+			<a href="javascript:;" class="prev">&laquo;</a>
+			<a href="javascript:;" class="next">&raquo;</a>
+			<script src="tools.js"></script>
+		</div>
+		<script type="text/javascript">		
+			//面向对象函数
+			function slideshow (container) {
+				this.container = document.querySelector(container);
+				this.ul = this.container.querySelector("ul");
+				this.btns = Array.from(this.container.querySelector("ol").children);
+				this.imgs = this.container.querySelector("ul").children;
+				this.prev = this.container.querySelector(".prev");
+				this.next = this.container.querySelector(".next");
+				this.index = 0;
+				this.lastIndex = 0;
+				this.timer = null;
+				this.bindEvents();
+			}
+			slideshow.prototype.bindEvents = function () {
+				this.btns.forEach((btn,i) => {
+					btn.onclick = () => {
+						this.index = i;
+						this.changeImg();
+					}
+				})
+				this.prev.onclick = () => {
+					this.index--;
+					if(this.index < 0) {
+						this.index = this.btns.length - 1;
+						this.ul.style.left = -(this.btns.length + 1) * 850+"px";
+					}
+					this.changeImg();
+				}
+				this.next.onclick = () => {
+					this.index++;
+					if(this.index === this.btns.length){
+						this.index = 0;
+						this.ul.style.left=0;
+					}
+					this.changeImg();
+				}
+				slideshow.prototype.autoPlay = function(){
+					this.timer = setInterval(()=>{
+						this.next.onclick();
+					},2000)
+				}
+				this.autoPlay();
+				this.container.onmouseenter = () =>{
+					clearInterval(this.timer);
+				}
+				this.container.onmouseleave = this.autoPlay.bind(this);
+			}
+			slideshow.prototype.changeImg = function () {
+				this.btns[this.lastIndex].classList.remove("ac");
+				this.btns[this.index].classList.add("ac");
+				this.lastIndex = this.index;
+				tools.linearMove(this.ul,"left",-(this.index + 1)*850,1000)
+			}
+			new slideshow(".box")
+		</script>
+	</body>
+</html>
